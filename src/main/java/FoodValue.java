@@ -16,7 +16,7 @@ public class FoodValue {
         try {
             answer = Double.parseDouble(temp);
         }catch(NumberFormatException n){
-            answer = -99.99; // double.infinity
+            answer = Double.NEGATIVE_INFINITY; // double.infinity
         }
 
         this.fats = answer;
@@ -28,7 +28,7 @@ public class FoodValue {
         try {
             answer = Double.parseDouble(temp);
         }catch (NumberFormatException n){
-            answer = -99.99;
+            answer = Double.NEGATIVE_INFINITY;
         }
 
         this.proteins = answer;
@@ -40,7 +40,7 @@ public class FoodValue {
         try {
             answer = Double.parseDouble(temp);
         }catch (NumberFormatException n){
-            answer = -99.99;
+            answer = Double.NEGATIVE_INFINITY;
         }
         this.carbohydrates = answer;
     }
@@ -51,7 +51,7 @@ public class FoodValue {
         try {
             answer = Double.parseDouble(temp);
         }catch (NumberFormatException n){
-            answer = -99.99;
+            answer = Double.NEGATIVE_INFINITY;
         }
 
         this.sucrose = answer;
@@ -63,7 +63,7 @@ public class FoodValue {
         try {
             answer = Double.parseDouble(temp);
         }catch (NumberFormatException n){
-            answer = -99.99;
+            answer = Double.NEGATIVE_INFINITY;
         }
 
         this.powerValueCcal = answer;

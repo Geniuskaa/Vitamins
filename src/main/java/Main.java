@@ -1,8 +1,10 @@
 import org.opencv.core.*;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-
 
 public class Main {
     public static void main(String[] args) throws Exception{
@@ -13,8 +15,10 @@ public class Main {
 
 
         ConnectionToBD con = new ConnectionToBD(); // Подключение к БД
-        con.runDB();
-        //con.tableCreation();
+
+        //con.tableCreationSQLite();
+
+        //con.closeConAndStat();
 
         Image image1 = new Image(); // Второй способ
         image1.imageScanner();
@@ -24,15 +28,10 @@ public class Main {
         //FoodValue fd1 = foodAndEnergyValueCleaner(s1);
         FoodValue fd2 = foodAndEnergyValueCleaner(s2);
 
-
-        con.addProductData(fd2);
-
+        con.addProductDataSQLite(fd2);
 
 
         System.out.println("______________________________________________________________________");
-        //System.out.println(s);
-
-
 
         }
 
@@ -82,8 +81,16 @@ public class Main {
         }
 
         public static FoodValue foodAndEnergyValueCleaner(String text){
+            String line = "";
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader("regex.txt"));
+                line = reader.readLine();
+            }catch (IOException e){
+                System.out.println(e.getMessage());
+            }
+
             String scanedText = text.toLowerCase()
-                    .replaceAll("[.|/|?|<|!|^|!|№|;|*|”|>|„|%|_|(|)|`|~|‹|›|-|‘|\"|\\\\|'|«|—|#|»|@|$|©|°|®|&|=|…|’|і|\\[]", "");
+                    .replaceAll(line, "");
 
             ArrayList<String> cleanedFoodAndEnVal = new ArrayList<>();
 
@@ -153,7 +160,6 @@ public class Main {
 //            for (String s : cleanedFoodAndEnVal) {
 //                System.out.println(s);
 //            }
-
 
             System.out.println(fv.toString());
 

@@ -7,5 +7,11 @@
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
       <jdbc-url>jdbc:mysql://localhost:3306/products</jdbc-url>
     </data-source>
+    <data-source source="LOCAL" name="products" uuid="e1f97669-07a2-4638-a536-b64ff176dd2a">
+      <driver-ref>sqlite.xerial</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.sqlite.JDBC</jdbc-driver>
+      <jdbc-url>jdbc:sqlite:$PROJECT_DIR$/products</jdbc-url>
+    </data-source>
   </component>
 </project>
