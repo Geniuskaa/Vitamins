@@ -1,7 +1,6 @@
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
 import java.io.File;
-import java.util.Scanner;
 
 public class Image {
     private final Tesseract image = new Tesseract();
@@ -19,10 +18,7 @@ public class Image {
     }
 
     //Converting from image to String method
-    void imageScanner() {
-        Scanner in = new Scanner(System.in);
-        System.out.println("Введите название файла: ");
-        String input = in.nextLine();
+    void imageScanner(String input) {
         this.imagePath = "C:\\Users\\User\\Downloads\\Telegram Desktop\\Tesj4\\" + input;
 
         try {

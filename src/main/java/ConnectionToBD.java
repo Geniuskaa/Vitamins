@@ -46,11 +46,11 @@ public class ConnectionToBD {
                     "sucrose, powerValueCcal) VALUES(?,?,?,?,?,?)";
             PreparedStatement preparedStatement = connection.prepareStatement(sql);
             preparedStatement.setString(1, nameOfProduct);
-            preparedStatement.setDouble(2, object.fats);
-            preparedStatement.setDouble(3, object.proteins);
-            preparedStatement.setDouble(4, object.carbohydrates);
-            preparedStatement.setDouble(5, object.sucrose);
-            preparedStatement.setDouble(6, object.powerValueCcal);
+            preparedStatement.setDouble(2, object.getFats());
+            preparedStatement.setDouble(3, object.getProteins());
+            preparedStatement.setDouble(4, object.getCarbohydrates());
+            preparedStatement.setDouble(5, object.getSucrose());
+            preparedStatement.setDouble(6, object.getPowerValueCcal());
             preparedStatement.executeUpdate();
 
             statement.close();

@@ -1,92 +1,64 @@
 import org.opencv.core.*;
-
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.logging.Logger;
 
 public class Main {
-    public static void main(String[] args) throws Exception{
+    private static Logger log = Logger.getLogger(Main.class.getName());
+    public static void main(String[] args) {
+
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 
+        Scanner in = new Scanner(System.in);
+        System.out.println("Введите название файла: ");
+        String input = in.nextLine();
 
-        //String s1 = new TextRecognizer().RecoText(); // Первый способ
-
+        ThreadsCounting counting = new ThreadsCounting();
+        Thread thread1 = counting.firstCounter(input);
+        Thread thread2 = counting.secondCounter(input);
 
         ConnectionToBD con = new ConnectionToBD(); // Подключение к БД
 
         //con.tableCreationSQLite();
 
-        //con.closeConAndStat();
+        thread1.start();
+        thread2.start();
 
-        Image image1 = new Image(); // Второй способ
-        image1.imageScanner();
-        String s2 = image1.getText();
 
-        //structureCleaner(s);
-        //FoodValue fd1 = foodAndEnergyValueCleaner(s1);
-        FoodValue fd2 = foodAndEnergyValueCleaner(s2);
+        try {
+            thread1.join();
+            thread2.join();
+        } catch (InterruptedException e) {
+            log.info(e.getMessage());
+        }
 
-        con.addProductDataSQLite(fd2);
+        System.out.println("\nThis is final version!");
+        FoodValue f3 = new FoodValue();
+        try {
+            f3 = foodValueImprover(counting.getFoodValue1(), counting.getFoodValue2());
+            System.out.println(f3.toString());
+            //con.addProductDataSQLite(f3);     //TODO добавление в БД
+        } catch (ClassNotFoundException e) {
+            log.info(e.getMessage());
+        }
+
 
 
         System.out.println("______________________________________________________________________");
 
         }
 
-        public static void structureCleaner(String text){
-            String scanedText = text.toLowerCase()
-                    .replaceAll("[.|/|?|<|,|!|^|!|№|;|*|”|>|„|%|_|(|)|`|~|:|‹|›|-|‚|‘|\"|\\\\|'|«|—|#|»|@|$|©|°|®|&|=|…|’|і|\\[]", "");
 
-            ArrayList<String> cleanedStructure = new ArrayList<>();
-
-            if(scanedText.contains("состав")){
-                String[] consistOf = scanedText.split(" ");
-                System.out.println("Мы смогли считать состав!");
-
-                int startPosition = -1;
-                for(int i=0; i < consistOf.length; i++){
-                    if(consistOf[i].equals("состав")){
-                        startPosition = i;
-                        break;
-                    }
-                }
-
-                if(startPosition != -1){
-
-                    for(int j = startPosition + 1; j < consistOf.length; j++){
-                        String temp = consistOf[j].replaceAll("\\s+","");
-
-                        if(temp.contains("пищев") || temp.contains("ценнос") || temp.contains("масса")){
-                            break;
-                        }
-
-                        if(temp.length() > 2){
-                            cleanedStructure.add(temp);
-                        }
-                    }
-
-                }
-
-            }else{
-                System.out.println("Нам не удалось считать состав...");
-                return;
-            }
-
-            for (String s : cleanedStructure) { //cleanedStructure
-                System.out.println(s);
-            }
-            //return s;
-        }
-
-        public static FoodValue foodAndEnergyValueCleaner(String text){
+        synchronized public static FoodValue foodAndEnergyValueCleaner(String text) throws InterruptedException {
             String line = "";
             try {
                 BufferedReader reader = new BufferedReader(new FileReader("regex.txt"));
                 line = reader.readLine();
             }catch (IOException e){
-                System.out.println(e.getMessage());
+                log.info(e.getMessage());
             }
 
             String scanedText = text.toLowerCase()
@@ -94,20 +66,19 @@ public class Main {
 
             ArrayList<String> cleanedFoodAndEnVal = new ArrayList<>();
 
-            if(scanedText.contains("ценнос")){
+            if(scanedText.contains("ценнос") || scanedText.contains("еннос")){
                 String[] fAndEnVal = scanedText.split(" ");
-                System.out.println("Мы смогли считать пищевую и энергетическую ценность продукта!");
+                System.out.println(Thread.currentThread().getName() + " смог считать пищевую и энергетическую ценность продукта!");
 
                 int startPosition = -1;
                 for(int i = 0; i < fAndEnVal.length; i++){
-                    if(fAndEnVal[i].contains("ценнос")){
+                    if(fAndEnVal[i].contains("ценнос") || fAndEnVal[i].contains("еннос")){
                         startPosition = i;
                         break;
                     }
                 }
 
                 if(startPosition != -1){
-
                     for(int j = startPosition + 1; j < fAndEnVal.length; j++){
                         String temp = fAndEnVal[j].replaceAll("\\s+","");
 
@@ -123,7 +94,7 @@ public class Main {
                 }
 
             }else{
-                System.out.println("Нам не удалось считать пищевую и энергетическую ценность продукта...");
+                System.out.println(Thread.currentThread().getName() + " не смог считать пищевую и энергетическую ценность продукта...");
                 return null;
             }
 
@@ -157,19 +128,50 @@ public class Main {
                 }
             }
 
-//            for (String s : cleanedFoodAndEnVal) {
-//                System.out.println(s);
-//            }
-
             System.out.println(fv.toString());
 
             return fv;
         }
 
-        public static FoodValue foodValueImprover(FoodValue f1, FoodValue f2){ // TODO: В работе
-            FoodValue f3 = new FoodValue();
+        public static FoodValue foodValueImprover(FoodValue f1, FoodValue f2) throws ClassNotFoundException {
+            if(f1 == null && f2 == null){
+                //дальше продолжать нельзя
+                throw new ClassNotFoundException("Данные не распознаны!");
+            }else if(f1 == null){
+                return f2;
+            }else if (f2 == null){
+                return f1;
+            }
+
+            FoodValue f3;
+
+            f3 = new FoodValue(fieldsComparator(f1.getFats(), f2.getFats()),
+                    fieldsComparator(f1.getProteins(), f2.getProteins()),
+                    fieldsComparator(f1.getCarbohydrates(), f2.getCarbohydrates()),
+                    fieldsComparator(f1.getSucrose(), f2.getSucrose()),
+                    fieldsComparator(f1.getPowerValueCcal(), f2.getPowerValueCcal()));
+
 
             return f3;
+        }
+
+
+        private static double fieldsComparator(double first, double second){
+            if(first == second && first != Double.NEGATIVE_INFINITY){
+                return first;
+            }else if (first == second){
+                return 0;
+            }
+
+            if(first != Double.NEGATIVE_INFINITY && first != 0){
+                return first;
+            }else if (second != Double.NEGATIVE_INFINITY && second != 0){
+                return second;
+            }else {
+                return Math.min(first, second);
+            }
+
+
         }
     }
 

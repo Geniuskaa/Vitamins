@@ -1,29 +1,22 @@
 import net.sourceforge.tess4j.Tesseract;
 import net.sourceforge.tess4j.TesseractException;
-import org.opencv.core.Core;
-import org.opencv.core.Mat;
-import org.opencv.core.MatOfByte;
-import org.opencv.core.Size;
+import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
+
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class TextRecognizer {
     Tesseract ts;
-    public String RecoText(){
+    public String RecoText(String input){
         ts = new Tesseract();
         ts.setDatapath("C:\\code\\Java\\tessdata");
         ts.setLanguage("rus");
         String text = "empty";
-
-        Scanner in = new Scanner(System.in);
-        System.out.println("Введите название файла: ");
-        String input = in.nextLine();
 
         try {
             text = ts.doOCR(getImage("C:\\Users\\User\\Downloads\\Telegram Desktop\\Tesj4\\" + input));
@@ -52,13 +45,3 @@ public class TextRecognizer {
     }
 }
 
-//        Mat destination = new Mat();
-//        Mat source = Imgcodecs.imread("C:\\Users\\User\\Downloads\\Telegram Desktop\\Tesj4\\test8.jpg");
-//
-//        for(int i=0; i < 1; i++){
-//            destination = new Mat(source.rows(), source.cols(), source.type());
-//            Imgproc.GaussianBlur(source, destination, new Size(0,0), 10);
-//            Core.addWeighted(source, 1.5, destination, -0.5, 0, destination);
-//            Imgcodecs.imwrite("C:\\Users\\User\\Downloads\\Telegram Desktop\\Tesj4\\test8.jpg", destination);
-//            source = destination;
-//        }

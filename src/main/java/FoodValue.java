@@ -1,13 +1,21 @@
 public class FoodValue {
-    public double fats;
-    public double proteins;
-    public double carbohydrates;
-    public double sucrose;
+    private double fats;
+    private double proteins;
+    private double carbohydrates;
+    private double sucrose;
 
-    public double powerValueCcal;
+    private double powerValueCcal;
 
 
     public FoodValue() {
+    }
+
+    public FoodValue(double fats, double proteins, double carbohydrates, double sucrose, double powerValueCcal) {
+        this.fats = fats;
+        this.proteins = proteins;
+        this.carbohydrates = carbohydrates;
+        this.sucrose = sucrose;
+        this.powerValueCcal = powerValueCcal;
     }
 
     public void stringToDoubleFats(String fats){
@@ -78,5 +86,25 @@ public class FoodValue {
                 ", sucrose=" + sucrose +
                 ", powerValueCcal=" + powerValueCcal +
                 '}';
+    }
+
+    public double getFats() {
+        return fats;
+    }
+
+    public double getProteins() {
+        return proteins;
+    }
+
+    public double getCarbohydrates() {
+        return carbohydrates;
+    }
+
+    public double getSucrose() {
+        return sucrose;
+    }
+
+    public double getPowerValueCcal() {
+        return powerValueCcal;
     }
 }
